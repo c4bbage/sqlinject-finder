@@ -1,5 +1,16 @@
 #!/usr/bin/env python
 
+####################################################################################
+#
+# sqlinject-finder.py
+#
+# Author: Tyler Dean
+# Date  : 11/19/2010
+# Description: Simple python script that parses through a pcap and looks at the 
+#              GET and POST request data for suspicious and possible SQL injects.
+#
+####################################################################################
+
 import dpkt, re, urllib, sys, getopt
 
 #removes inline comments that can sometimes be used for obfuscating the sql
@@ -92,7 +103,7 @@ def parsepcap(filename):
 						index = -1
 				except:
 					data = tcp.data
-					index = data.count("\n") #need to look into this method a little more
+					index = data.count("\n") #need to look into this method a little more, basically, we want to get POST data out of other streams
 					if index == 0:
 						index = data.find("=")
 						if index != -1:
@@ -151,4 +162,3 @@ def main():
 
 if __name__ == "__main__":
 	main()	
-
