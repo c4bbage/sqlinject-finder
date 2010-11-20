@@ -35,7 +35,7 @@ def analyzeRequest(vals, sIP, page, frameno):
 	val = urllib.unquote(val) #removes url encodings like %20 for space, etc
 	val = val.replace("+", " ") #sometimes in urls, instead of a space you can have a + . So, we want to remove those for analysis
 	#print val
-	display = ["false", sIP, page, var, val]
+	display = [False, sIP, page, var, val]
 	##### Look for obfuscation techniques ######
 	index = val.find("/*")
 	if index != -1:
