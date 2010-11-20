@@ -5,7 +5,7 @@
 # sqlinject-finder.py
 #
 # Author: Tyler Dean
-# Date  : 11/19/2010
+# Date  : 11/20/2010
 # Description: Simple python script that parses through a pcap and looks at the 
 #              GET and POST request data for suspicious and possible SQL injects.
 #
@@ -105,6 +105,7 @@ def parsepcap(filename):
 			#assuming http is running on port 80
 			if tcp.dport == 80 and len(tcp.data) > 0:
 				index = 1
+				getvals = ""
 				try:
 					http = dpkt.http.Request(tcp.data)
 					url = http.uri
@@ -116,15 +117,13 @@ def parsepcap(filename):
 							page = url[:index]
 						else:
 							page = url
-						print "page = " + page
 					#deal with GET data
 					elif http.method == "GET":
 						index = url.rfind("?")
 						if index != -1:
 							getvals = url[index+1:]
 							page = url[:index]
-					else:
-						index = -1
+
 				except:
 					data = tcp.data
 					index = str(data).find("POST")
@@ -133,14 +132,12 @@ def parsepcap(filename):
 						page = url[1] #POST is usually always the second value in the POST
 					index = str(data).count("\n") #need to look into this method a little more, basically, we want to get POST data out of other streams
 					if index == 0:
-						index = data.find("=")
+						index = str(data).find("=")
 						if index != -1:
-							getvals = data
-					else:
-						index = -1
+							getvals = str(data)
 						
 				#split up each variable and its cooresponding value
-				if index != -1:
+				if getvals != "":
 					getvals = getvals.split("&")
 					for val in getvals:
 						i = val.find("=")
