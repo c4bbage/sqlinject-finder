@@ -28,7 +28,7 @@ def removeComments(val):
 	return val
 
 #checks for common sql injection tactics using all the variables from post or get data
-def analyzeRequest(vals, sIP, page):
+def analyzeRequest(vals, sIP, page, frameno):
 	var = vals[0] #the variable, i.e. in id=1, the var is id
 	val = vals[1] #the value, i.e. in id=1, the val is 1
 	val = val.decode('ascii') #not sure if this is really doing anything, but we need to deal with non ascii characters for analysis
@@ -68,6 +68,7 @@ def analyzeRequest(vals, sIP, page):
 		print "Source : " + str(display[1])
 		print "Page   : " + str(display[2])
 		print "Value  : " + str(display[3]) + "=" + str(display[4])
+		print "Frame  : " + str(frameno)
 		for i in range(len(display)-5):
 			print "Reason : " + str(display[i+5])
 		print ""
@@ -95,6 +96,7 @@ def parsepcap(filename):
 		sys.exit()
 	sIP=""
 	page=""
+	frameno = 1
 	print ""
 	for ts, buf in pcap:
 		eth = dpkt.ethernet.Ethernet(buf)
@@ -143,7 +145,9 @@ def parsepcap(filename):
 						i = val.find("=")
 						val = (val[:i], val[i+1:])
 						sIP = octetIP(ip.src)
-						analyzeRequest(val, sIP, page)
+						analyzeRequest(val, sIP, page, frameno)
+						
+		frameno += 1
 				
 
 	f.close()				
