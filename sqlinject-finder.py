@@ -146,11 +146,8 @@ def parsepcap(filename):
 						val = (val[:i], val[i+1:])
 						sIP = octetIP(ip.src)
 						analyzeRequest(val, sIP, page, frameno)
-						
 		frameno += 1
-				
-
-	f.close()				
+	f.close()
 
 #usage stuff
 def usage():
