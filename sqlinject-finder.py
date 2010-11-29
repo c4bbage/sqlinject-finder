@@ -13,6 +13,8 @@
 
 import dpkt, re, urllib, sys, getopt
 
+tab = False
+
 #removes inline comments that can sometimes be used for obfuscating the sql
 def removeComments(val):
 	while True:
@@ -65,13 +67,19 @@ def analyzeRequest(vals, sIP, page, frameno):
 			break
 
 	if display[0] == True:
-		print "Source : " + str(display[1])
-		print "Page   : " + str(display[2])
-		print "Value  : " + str(display[3]) + "=" + str(display[4])
-		print "Frame  : " + str(frameno)
-		for i in range(len(display)-5):
-			print "Reason : " + str(display[i+5])
-		print ""
+		if tab:
+			line = str(display[1]) + "\t" + str(display[2]) + "\t" + str(display[3]) + "=" + str(display[4]) + "\t" + str(frameno)
+			for i in range(len(display)-5):
+				line = line + "\t" + str(display[i+5])
+			print line
+		else:
+			print "Source : " + str(display[1])
+			print "Page   : " + str(display[2])
+			print "Value  : " + str(display[3]) + "=" + str(display[4])
+			print "Frame  : " + str(frameno)
+			for i in range(len(display)-5):
+				print "Reason : " + str(display[i+5])
+			print ""
 
 def octetIP(sIP):
 	ip = ""
@@ -97,7 +105,6 @@ def parsepcap(filename):
 	sIP=""
 	page=""
 	frameno = 1
-	print ""
 	for ts, buf in pcap:
 		eth = dpkt.ethernet.Ethernet(buf)
 		ip = eth.data
@@ -157,14 +164,16 @@ def usage():
 	print "usage: sqlinject-finder.py -f filename"
 	print "Options and arguments (and corresponding environment variables):"
 	print "-f, --filename : valid pcap file"
+	print "-t, --tab      : prints output in tab delimited format"
 	print "-h, --help     : shows this screen"
 	print ""
 	print "Example: #python sqlinject-finder.py -f capture.pcap"
+	print "         #python sqlinject-finder.py -f capture.pcap -t > capture.tsv"
 	print ""
 
 def main():
 	try:	
-		opts, args = getopt.getopt(sys.argv[1:], "f:h", ["filename=","help"])
+		opts, args = getopt.getopt(sys.argv[1:], "f:th", ["filename=", "tab", "help"])
 	except getopt.GetoptError, err:
 		print str(err)
 		usage()
@@ -174,6 +183,9 @@ def main():
 	for o, a in opts:
 		if o in ("-f", "--filename"):
 			filename = a
+		elif o in ("-t", "--tab"):
+				global tab
+				tab = True	
 		elif o in ("-h", "--help"):
 			usage()
 			sys.exit()
@@ -183,7 +195,9 @@ def main():
 	if (filename == ""):
 		print "please specify a filename"
 		sys.exit()
-	parsepcap(filename)
-
+	if tab:
+		print "Source\tPage\tValue\tFrame\tReason(s)"
+	parsepcap(filename)	
+	
 if __name__ == "__main__":
-	main()	
+	main()
