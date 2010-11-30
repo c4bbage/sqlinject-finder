@@ -5,7 +5,7 @@
 # sqlinject-finder.py
 #
 # Author: Tyler Dean
-# Date  : 11/20/2010
+# Date  : 12/02/2010
 # Description: Simple python script that parses through a pcap and looks at the 
 #              GET and POST request data for suspicious and possible SQL injects.
 #
