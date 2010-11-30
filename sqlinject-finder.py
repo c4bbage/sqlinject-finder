@@ -161,7 +161,7 @@ def usage():
 	print ""
 	print "This tool parses through a pcap file and looks for potential SQL injection attempts."
 	print ""
-	print "usage: sqlinject-finder.py -f filename"
+	print "usage: sqlinject-finder.py -f filename [-t]"
 	print "Options and arguments (and corresponding environment variables):"
 	print "-f, --filename : valid pcap file"
 	print "-t, --tab      : prints output in tab delimited format"
